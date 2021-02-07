@@ -30,6 +30,20 @@
       color: black;
     }
 
+    div.buttons > i.button:hover, div.edit > i.button:hover {
+        cursor: pointer;
+        border: solid dimgrey 2px;
+    }
+
+    div.buttons > i.button, div.edit > i.button {
+      color: #c3c2c1;
+      background-color: #333;
+      margin: 0.24rem;
+      padding: 4px;
+      border: solid #555 2px;
+      border-radius: 4px;
+    }
+
     /* Set black background color, white text and some padding */
     footer {
       background-color: #555;
@@ -177,6 +191,9 @@
         	          } else {
                               data = JSON.parse(xhttp.responseText);
                               PGNV.pgnView('board',{ pgn: data['pgn'],  showCoords: false, width: window.innerHeight * 0.65 + 'px' });
+                              let moves = data['pgn'].split(" ");
+                              let result = moves[moves.length - 1];
+                              document.getElementById("boardMoves").innerHTML += `<span class="result">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;` + result +  `</span>`;
         	          }
         	      }
         	  };
