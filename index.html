@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>eloguessr</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="js/pgnv.js" type="text/javascript" ></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 100%}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      color: #c3c2c1;
+      font-size: 20px;
+      height: 100%;
+    }
+
+    #elo {
+      color: black;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+      margin-bottom: -10px;
+    }
+ 
+    #elo-text {
+      font-size: 22px;
+    }    
+
+    #score-text {
+      color: #dbac16;
+      font-size: 22px;
+    }
+
+    #board {
+      margin: auto auto;
+      padding-top: 5%;
+    }
+ 
+    #submit-button {
+      background-color: #7fa650;
+      color: white;
+      width: 115px;
+      height: 50px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 18px;
+
+    }
+
+    #boardMoves {
+      height: 100px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      background-color: #272522;
+      color: #c3c2c1;
+      padding-left: 10px;
+      padding-top: 10px;
+      border-radius: 10px;
+    }
+
+    #boardMoves a {
+      color: #c3c2c1;
+
+    }
+
+    .moveNumber {
+      padding-left: 5px;
+      font-weight: 400;
+    }
+
+    body {
+      background-color: #312e2b;
+      overflow: hidden;
+
+    }
+
+    #guesser h1 {
+      font-weight: bold;
+    }
+
+    #guesser p {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 20px;
+    }
+
+    #guesser {
+      margin: 15%;
+      padding: 10px;
+      border-radius: 25px;
+      height: 100%;
+      min-height: 350px;
+      background-color: #272522;
+
+    }
+
+    #answer {
+      margin-top: -25px;
+      padding-bottom: 20px;
+      display: none;
+    }
+
+    #newgame_form {
+      display: none;
+      padding-bottom: 20px;
+    }
+
+    .righthead {
+      float: right;
+    }
+
+    .promo {
+      font-size: 14px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">eloguessr</a>
+    </div>
+    <div class="righthead navbar-header">
+      <a class="promo navbar-brand" href="https://twitter.com/shikibmehri">Made by <strong>Shikib</strong></a>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-1 text-left"> </div>
+
+    <div class="col-sm-5 text-left"> 
+      <div class="game">
+        <div id="board"></div>
+        <script>
+                function load_game() {
+                  if(document.getElementById("newgame_form")) {
+                    document.getElementById("newgame_form").style.display = "none";
+                    document.getElementById("answer").style.display = "none";
+                    document.getElementById("guesser_form").style.display = "block";
+                    document.getElementById("elo").value = "";
+                  }
+        	  var xhttp = new XMLHttpRequest();
+        	  xhttp.onreadystatechange = function() {
+        	      if (this.readyState == 4 && this.status == 200) {
+        	          if (xhttp.responseText === undefined ) {
+                              alert("RIP");
+        	          } else {
+                              data = JSON.parse(xhttp.responseText);
+                              PGNV.pgnView('board',{ pgn: data['pgn'],  showCoords: false, width: window.innerHeight * 0.65 + 'px' });
+        	          }
+        	      }
+        	  };
+        	  xhttp.open("GET", "http://shikib.sp.cs.cmu.edu:8884/", true);
+        	  xhttp.send();
+
+                }
+  
+                load_game();
+
+                function get_score() {
+                  let real_elo = (data['white_elo'] + data['black_elo'] ) /2;
+                  let val = parseInt(document.getElementById("elo").value, 10);
+                  if(val > 0) {
+                    let x = Math.max(Math.min(val - real_elo, 1000), -1000);
+                    score = Math.round(2500*(Math.sin(x*Math.PI/1000+Math.PI/2)+1));
+
+                    document.getElementById("answer").style.display = "block";
+                    document.getElementById("score").innerHTML = " " + score + "/5000";
+                    document.getElementById("real_elo").innerHTML = Math.floor(real_elo);
+                    document.getElementById("guessed_elo").innerHTML = val;
+                    document.getElementById("game_url").href = data['game_url'];
+                    document.getElementById("guesser_form").style.display = "none";
+                    document.getElementById("newgame_form").style.display = "block";
+
+                  }
+
+                }
+
+
+        </script>
+      </div>
+    </div>
+    <div class="col-sm-5 sidenav">
+      
+      <div id="guesser">
+        <h1>Guess the ELO</h1>
+        <p>This is a rated blitz game played on chess.com. The elo difference between the players is at most 200. Guess the average ELO of the game!</p> <br> 
+
+	<form id="guesser_form" onsubmit="get_score(); return false;">
+	  <label for="elo"><span id="elo-text">ELO (between 0 and 3500):</span></label>
+	  <input type="number" id="elo" name="elo" min="0" max="3500">
+          <br>
+	  <input id="submit-button" type="submit" value="Submit">
+	</form>
+
+        <div id="answer">
+          <p id="score-text">Your score is <strong id="score"></strong></p>
+	  <p>You guessed <strong id="guessed_elo"></strong>. The correct elo is <strong id="real_elo"></strong>. Checkout the <a id="game_url" href="">game on chess.com!</a></p>
+        </div>
+
+	<form id="newgame_form" onsubmit="load_game(); return false;">
+	  <input id="submit-button" type="submit" value="New Game">
+	</form>
+
+      </div>
+
+
+    </div>
+
+    <div class="col-sm-1 sidenav"></div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
+
