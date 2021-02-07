@@ -14,6 +14,25 @@
       margin-bottom: 0;
       border-radius: 0;
     }
+
+    #boardMovesResult {
+      padding-left: 25px;
+    }
+
+    .move:hover {
+      cursor: pointer;
+    }
+
+    .moves .move a:hover {
+      cursor: pointer;
+    }
+    .move a {
+      cursor: pointer;
+    }
+
+    .move a:hover {
+      cursor: pointer;
+    }
     
     /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
     .row.content {height: 100%}
@@ -190,10 +209,9 @@
                               alert("RIP");
         	          } else {
                               data = JSON.parse(xhttp.responseText);
-                              PGNV.pgnView('board',{ pgn: data['pgn'],  showCoords: false, width: window.innerHeight * 0.65 + 'px' });
+                              PGNV.pgnView('board',{ pgn: data['pgn'],  showCoords: false, width: window.innerHeight * 0.65 + 'px' , showResult: true});
                               let moves = data['pgn'].split(" ");
                               let result = moves[moves.length - 1];
-                              document.getElementById("boardMoves").innerHTML += `<span class="result">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;` + result +  `</span>`;
         	          }
         	      }
         	  };
