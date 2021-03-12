@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>evalguessr</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="js/pgnv.js" type="text/javascript" ></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+	          integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+		          crossorigin="anonymous"></script>
+
+  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+	          integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+		          crossorigin="anonymous"></script>
+  <link rel="stylesheet"
+        href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+	      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+	            crossorigin="anonymous">
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8MCN5N3N1R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-8MCN5N3N1R');
+</script>
+
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .white-1e1d7 {
+      color: #8ca2ad;
+      background-color: #dee3e6;
+    }
+
+    .black-3c85d {
+      color: #dee3e6;
+      background-color: #8ca2ad;
+    }
+
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    #boardMovesResult {
+      padding-left: 25px;
+    }
+
+    .move:hover {
+      cursor: pointer;
+    }
+
+    .moves .move a:hover {
+      cursor: pointer;
+    }
+    .move a {
+      cursor: pointer;
+    }
+
+    .move a:hover {
+      cursor: pointer;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 100%}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      color: #c3c2c1;
+      font-size: 20px;
+      height: 100%;
+    }
+
+    #elo {
+      color: black;
+    }
+
+    div.buttons > i.button:hover, div.edit > i.button:hover {
+        cursor: pointer;
+        border: solid dimgrey 2px;
+    }
+
+    div.buttons > i.button, div.edit > i.button {
+      color: #c3c2c1;
+      background-color: #333;
+      margin: 0.24rem;
+      padding: 4px;
+      border: solid #555 2px;
+      border-radius: 4px;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+      margin-bottom: -10px;
+    }
+ 
+    #elo-text {
+      font-size: 22px;
+    }    
+
+    #score-text {
+      color: #dbac16;
+      font-size: 22px;
+    }
+
+    #board {
+      margin: auto auto;
+      padding-top: 10%;
+    }
+ 
+    #submit-button {
+      background-color: #7fa650;
+      color: white;
+      width: 115px;
+      height: 50px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 18px;
+
+    }
+
+    #boardMoves {
+      height: 100px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      background-color: #272522;
+      color: #c3c2c1;
+      padding-left: 10px;
+      padding-top: 10px;
+      border-radius: 10px;
+    }
+
+    #boardMoves a {
+      color: #c3c2c1;
+
+    }
+
+    .moveNumber {
+      padding-left: 5px;
+      font-weight: 400;
+    }
+
+    body {
+      background-color: #312e2b;
+      overflow: hidden;
+
+    }
+
+    #guesser h1 {
+      font-weight: bold;
+    }
+
+    #guesser p {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 20px;
+    }
+
+    #guesser {
+      margin: 15%;
+      padding: 10px;
+      border-radius: 25px;
+      height: 100%;
+      min-height: 350px;
+      background-color: #272522;
+
+    }
+
+    #answer {
+      margin-top: -25px;
+      padding-bottom: 20px;
+      display: none;
+    }
+
+    #newgame_form {
+      display: none;
+      padding-bottom: 20px;
+    }
+
+    .righthead {
+      float: right;
+    }
+
+    .promo {
+      font-size: 14px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">evalguessr</a>
+    </div>
+    <div class="righthead navbar-header">
+	    <a class="promo navbar-brand" href="https://twitter.com/shikibmehri">Made by <strong>Shikib</strong></a> <a class="promo navbar-brand" href="https://www.youtube.com/watch?v=-BtNNlo-5vQ">(YouTube Video) </a>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-1 text-left"> </div>
+
+    <div class="col-sm-5 text-left"> 
+      <div class="game">
+	<div id="board" style="width: 650px"></div>
+        <script>
+                function load_game() {
+                  if(document.getElementById("newgame_form")) {
+                    document.getElementById("newgame_form").style.display = "none";
+                    document.getElementById("answer").style.display = "none";
+                    document.getElementById("guesser_form").style.display = "block";
+                    document.getElementById("elo").value = "";
+                  }
+		  var board = Chessboard('board');
+        	  var xhttp = new XMLHttpRequest();
+        	  xhttp.onreadystatechange = function() {
+        	      if (this.readyState == 4 && this.status == 200) {
+        	          if (xhttp.responseText === undefined ) {
+                              alert("RIP");
+        	          } else {
+                              data = JSON.parse(xhttp.responseText);
+		  	      board.position(data['fen'])
+        	          }
+        	      }
+        	  };
+        	  xhttp.open("GET", "http://34.122.11.34/eval", true);
+        	  xhttp.send();
+
+                }
+  
+                load_game();
+
+                function get_score() {
+                  let real_elo = data['eval']/100;
+                  let val = parseFloat(document.getElementById("elo").value, 2);
+		  x = real_elo - val;
+                  score = Math.round(2500*(Math.sin(x*Math.PI/5+Math.PI/2)+1));
+
+                  document.getElementById("answer").style.display = "block";
+                  document.getElementById("score").innerHTML = " " + score + "/5000";
+                  document.getElementById("real_elo").innerHTML = real_elo.toFixed(2);
+                  document.getElementById("guessed_elo").innerHTML = val.toFixed(2);
+                  document.getElementById("game_url").href = "https://lichess.org/analysis/" + data['fen'];
+                  document.getElementById("guesser_form").style.display = "none";
+                  document.getElementById("newgame_form").style.display = "block";
+
+                }
+        </script>
+      </div>
+    </div>
+    <div class="col-sm-5 sidenav">
+      
+      <div id="guesser">
+        <h1>Guess the EVAL</h1>
+        <p>White to play. Guess the Stockfish engine evaluation for this position (-10 to +10, no forced mates).</p> <br> 
+
+	<form id="guesser_form" onsubmit="get_score(); return false;">
+	  <label for="elo"><span id="elo-text">EVAL (between -10 and +10):</span></label>
+	  <input type="number" step="0.01" id="elo" name="elo" min="-10" max="10">
+          <br>
+	  <input id="submit-button" type="submit" value="Submit">
+	</form>
+
+        <div id="answer">
+          <p id="score-text">Your score is <strong id="score"></strong></p>
+	  <p>You guessed <strong id="guessed_elo"></strong>. The correct eval is <strong id="real_elo"></strong>. Checkout the <a id="game_url" href="">analysis on lichess!</a></p>
+        </div>
+
+	<form id="newgame_form" onsubmit="load_game(); return false;">
+	  <input id="submit-button" type="submit" value="New Game">
+	</form>
+
+      </div>
+
+
+    </div>
+
+    <div class="col-sm-1 sidenav"></div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
+
