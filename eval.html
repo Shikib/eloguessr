@@ -255,7 +255,7 @@
                 function get_score() {
                   let real_elo = data['eval']/100;
                   let val = parseFloat(document.getElementById("elo").value, 2);
-		  x = real_elo - val;
+		  x = Math.abs(real_elo - val);
                   score = Math.round(2500*(Math.sin(x*Math.PI/5+Math.PI/2)+1));
 
                   document.getElementById("answer").style.display = "block";
